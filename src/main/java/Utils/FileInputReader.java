@@ -1,9 +1,13 @@
 package Utils;
 
+import Calculation.CraftbookVariableHelper;
 import Interface.FileAdderInterface;
 import lombok.SneakyThrows;
 
 import java.io.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class FileInputReader {
 
@@ -26,5 +30,18 @@ public class FileInputReader {
         });
         variablesYmlWriter.close();
         variablesYmlReader.close();
+    }
+
+    public static List<String> getViableIDs(String path) {
+        List<String> minecraftIDs;
+
+        try (InputStream in = CraftbookVariableHelper.class.getResourceAsStream(path);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
+            minecraftIDs = reader.lines().map(s -> s.replace("minecraft:", "").trim()).filter(s -> !s.equals("// contains all viable ID's as of version 1.17.1")).collect(Collectors.toList());
+        } catch (IOException | NullPointerException e) {
+            return null;
+        }
+
+        return minecraftIDs;
     }
 }

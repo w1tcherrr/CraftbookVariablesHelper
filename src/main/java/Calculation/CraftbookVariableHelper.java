@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static Utils.FileInputReader.getViableIDs;
+
 public class CraftbookVariableHelper {
 
     @SneakyThrows
@@ -84,15 +86,14 @@ public class CraftbookVariableHelper {
 
         List<String[]> returnList = new ArrayList<>();
 
-        List<String> minecraftIDs;
+        List<String> minecraftIDs = getViableIDs("/minecraft_ids.txt");
 
-        try (InputStream in = CraftbookVariableHelper.class.getResourceAsStream("/minecraft_ids.txt");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
-            minecraftIDs = reader.lines().map(s -> s.replace("minecraft:", "").trim()).collect(Collectors.toList());
-        } catch (IOException | NullPointerException e) {
+        if (minecraftIDs == null) {
             errorMessageList.add(new String[]{"An error occurred while \nexecuting this query! \nPlease ask EmielRegis for support."});
             return errorMessageList;
         }
+
+        System.out.println(minecraftIDs);
 
         File file = new File(FileAdderInterface.getDirectory() + "/variables.txt");
 
